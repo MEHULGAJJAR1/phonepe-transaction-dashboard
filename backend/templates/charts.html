@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Realtime Charts</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="bg-orbs">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+</div>
+
+<div class="sidebar">
+    <div class="logo-wrap">
+        <div class="logo-icon">P</div>
+        <h2 class="logo">PhonePe</h2>
+    </div>
+    <nav class="nav-links">
+        <a href="/" class="nav-item"><span class="nav-icon">⬡</span> Dashboard</a>
+        <a href="/charts" class="nav-item active"><span class="nav-icon">◈</span> Charts</a>
+        <a href="/map" class="nav-item"><span class="nav-icon">◉</span> Map Insights</a>
+        <a href="/top" class="nav-item"><span class="nav-icon">◆</span> Top Performers</a>
+    </nav>
+    <div class="sidebar-about">
+        <div class="sa-badge">ABOUT</div>
+        <p>PhonePe Transaction Insights Dashboard — analyzing India's digital payment landscape.</p>
+    </div>
+</div>
+
+<div class="main">
+    <div class="navbar">
+        <div class="navbar-title">
+            <span class="title-tag">LIVE</span>
+            Realtime Analytics Dashboard
+        </div>
+        <div class="navbar-right">2018 – 2024</div>
+    </div>
+
+    <div class="container">
+
+        <div class="chart-block" style="--delay:0s">
+            <div class="section-header">
+                <h2>Year Wise Transactions</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="chart-wrap">
+                <canvas id="yearChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-block" style="--delay:0.15s">
+            <div class="section-header">
+                <h2>Transaction Type Distribution</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="chart-wrap chart-wrap-sm">
+                <canvas id="typeChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-block" style="--delay:0.3s">
+            <div class="section-header">
+                <h2>Top States</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="chart-wrap">
+                <canvas id="stateChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+const chartDefaults = {
+    color: '#8b83a8',
+    font: { family: 'DM Sans', size: 12 }
+};
+Chart.defaults.color = chartDefaults.color;
+Chart.defaults.font = chartDefaults.font;
+
+const gridColor = 'rgba(139,92,246,0.1)';
+const barColor = 'rgba(108,59,255,0.75)';
+const barHover = 'rgba(192,38,211,0.85)';
+
+const pieColors = [
+    'rgba(108,59,255,0.8)', 'rgba(192,38,211,0.8)',
+    'rgba(167,139,250,0.8)', 'rgba(79,70,229,0.8)',
+    'rgba(236,72,153,0.8)', 'rgba(99,102,241,0.8)'
+];
+
+// Year Chart
+fetch('/api/yearly')
+.then(res => res.json())
+.then(data => {
+    new Chart(document.getElementById('yearChart'), {
+        type: 'bar',
+        data: {
+            labels: data.years,
+            datasets: [{
+                label: 'Transaction Amount',
+                data: data.amounts,
+                backgroundColor: barColor,
+                hoverBackgroundColor: barHover,
+                borderRadius: 8,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            animation: { duration: 1800, easing: 'easeOutQuart' },
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { grid: { color: gridColor }, ticks: { color: '#8b83a8' } },
+                y: { grid: { color: gridColor }, ticks: { color: '#8b83a8' } }
+            }
+        }
+    });
+});
+
+// Type Chart
+fetch('/api/types')
+.then(res => res.json())
+.then(data => {
+    new Chart(document.getElementById('typeChart'), {
+        type: 'doughnut',
+        data: {
+            labels: data.types,
+            datasets: [{
+                data: data.amounts,
+                backgroundColor: pieColors,
+                borderColor: 'rgba(10,8,18,0.8)',
+                borderWidth: 2,
+                hoverOffset: 10
+            }]
+        },
+        options: {
+            animation: { animateScale: true, duration: 1800 },
+            plugins: {
+                legend: { position: 'right', labels: { color: '#8b83a8', padding: 16, font: { size: 12 } } }
+            },
+            cutout: '60%'
+        }
+    });
+});
+
+// Top States Chart
+fetch('/api/topstates')
+.then(res => res.json())
+.then(data => {
+    new Chart(document.getElementById('stateChart'), {
+        type: 'bar',
+        data: {
+            labels: data.states,
+            datasets: [{
+                label: 'Transaction Amount',
+                data: data.amounts,
+                backgroundColor: pieColors,
+                borderRadius: 8,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            animation: { duration: 1800, easing: 'easeOutBounce' },
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { grid: { color: gridColor }, ticks: { color: '#8b83a8', maxRotation: 45 } },
+                y: { grid: { color: gridColor }, ticks: { color: '#8b83a8' } }
+            }
+        }
+    });
+});
+
+const main = document.querySelector('.main');
+main.addEventListener('scroll', () => {
+    document.querySelector('.navbar').classList.toggle('scrolled', main.scrollTop > 20);
+});
+</script>
+</body>
+</html>

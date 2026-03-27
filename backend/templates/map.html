@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Map Insights</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="bg-orbs">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+</div>
+
+<div class="sidebar">
+    <div class="logo-wrap">
+        <div class="logo-icon">P</div>
+        <h2 class="logo">PhonePe</h2>
+    </div>
+    <nav class="nav-links">
+        <a href="/" class="nav-item"><span class="nav-icon">⬡</span> Dashboard</a>
+        <a href="/charts" class="nav-item"><span class="nav-icon">◈</span> Charts</a>
+        <a href="/map" class="nav-item active"><span class="nav-icon">◉</span> Map Insights</a>
+        <a href="/top" class="nav-item"><span class="nav-icon">◆</span> Top Performers</a>
+    </nav>
+    <div class="sidebar-about">
+        <div class="sa-badge">ABOUT</div>
+        <p>PhonePe Transaction Insights Dashboard — analyzing India's digital payment landscape.</p>
+    </div>
+</div>
+
+<div class="main">
+    <div class="navbar">
+        <div class="navbar-title">
+            <span class="title-tag">LIVE</span>
+            Map Insights
+        </div>
+        <div class="navbar-right">2018 – 2024</div>
+    </div>
+
+    <div class="container">
+
+        <div class="chart-block" style="--delay:0s">
+            <div class="section-header">
+                <h2>State Wise Transactions</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="chart-wrap">
+                <canvas id="stateChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+Chart.defaults.color = '#8b83a8';
+Chart.defaults.font = { family: 'DM Sans', size: 12 };
+
+var states  = {{ states | tojson }};
+var amounts = {{ amounts | tojson }};
+
+const barColors = states.map((_, i) => `hsla(${260 + i * 6}, 70%, 65%, 0.8)`);
+
+new Chart(document.getElementById('stateChart'), {
+    type: 'bar',
+    data: {
+        labels: states,
+        datasets: [{
+            label: 'Transaction Amount',
+            data: amounts,
+            backgroundColor: barColors,
+            borderRadius: 8,
+            borderSkipped: false,
+        }]
+    },
+    options: {
+        indexAxis: 'y',
+        animation: { duration: 1600, easing: 'easeOutQuart' },
+        plugins: { legend: { display: false } },
+        scales: {
+            x: { grid: { color: 'rgba(139,92,246,0.1)' }, ticks: { color: '#8b83a8' } },
+            y: { grid: { color: 'rgba(139,92,246,0.05)' }, ticks: { color: '#c4bfda', font: { size: 11 } } }
+        }
+    }
+});
+
+const main = document.querySelector('.main');
+main.addEventListener('scroll', () => {
+    document.querySelector('.navbar').classList.toggle('scrolled', main.scrollTop > 20);
+});
+</script>
+</body>
+</html>

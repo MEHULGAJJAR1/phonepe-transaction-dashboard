@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PhonePe Transaction Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="bg-orbs">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="logo-wrap">
+        <div class="logo-icon">P</div>
+        <h2 class="logo">PhonePe</h2>
+    </div>
+    <nav class="nav-links">
+        <a href="/" class="nav-item active"><span class="nav-icon">⬡</span> Dashboard</a>
+        <a href="/charts" class="nav-item"><span class="nav-icon">◈</span> Charts</a>
+        <a href="/map" class="nav-item"><span class="nav-icon">◉</span> Map Insights</a>
+        <a href="/top" class="nav-item"><span class="nav-icon">◆</span> Top Performers</a>
+    </nav>
+    <div class="sidebar-about">
+        <div class="sa-badge">ABOUT</div>
+        <p>PhonePe Transaction Insights Dashboard — analyzing India's digital payment landscape.</p>
+    </div>
+</div>
+
+<!-- Main -->
+<div class="main">
+    <div class="navbar">
+        <div class="navbar-title">
+            <span class="title-tag">LIVE</span>
+            PhonePe Transaction Insights Dashboard
+        </div>
+        <div class="navbar-right">2018 – 2024</div>
+    </div>
+
+    <div class="container">
+
+        <!-- Filters -->
+        <div class="filters">
+            <form method="GET">
+                <div class="filter-group">
+                    <label>Year</label>
+                    <select name="year">
+                        <option value="">All Years</option>
+                        {% for y in years %}
+                        <option value="{{ y[0] }}" {% if year == y[0]|string %}selected{% endif %}>{{ y[0] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>State</label>
+                    <select name="state">
+                        <option value="">All States</option>
+                        {% for s in states %}
+                        <option value="{{ s[0] }}" {% if state == s[0] %}selected{% endif %}>{{ s[0] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Transaction Type</label>
+                    <select name="type">
+                        <option value="">All Types</option>
+                        {% for t in types %}
+                        <option value="{{ t[0] }}" {% if ttype == t[0] %}selected{% endif %}>{{ t[0] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="filter-btn">Apply Filter</button>
+            </form>
+        </div>
+
+        <!-- Cards -->
+        <div class="cards-grid">
+            <div class="card" style="--delay:0s">
+                <div class="card-icon">⟁</div>
+                <div class="card-body">
+                    <p class="card-label">Total Transactions</p>
+                    <h3 class="card-value">{{ total_transaction }}</h3>
+                </div>
+                <div class="card-shine"></div>
+            </div>
+            <div class="card" style="--delay:0.1s">
+                <div class="card-icon">◎</div>
+                <div class="card-body">
+                    <p class="card-label">Total Users</p>
+                    <h3 class="card-value">{{ total_users }}</h3>
+                </div>
+                <div class="card-shine"></div>
+            </div>
+            <div class="card" style="--delay:0.2s">
+                <div class="card-icon">❋</div>
+                <div class="card-body">
+                    <p class="card-label">Total Insurance</p>
+                    <h3 class="card-value">{{ total_insurance }}</h3>
+                </div>
+                <div class="card-shine"></div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-section">
+            <div class="section-header">
+                <h2>Transaction Details</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>State</th><th>Year</th><th>Quarter</th>
+                            <th>Transaction Type</th><th>Amount</th><th>Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in table_data %}
+                        <tr>
+                            <td>{{ row[0] }}</td>
+                            <td>{{ row[1] }}</td>
+                            <td>Q{{ row[2] }}</td>
+                            <td><span class="type-badge">{{ row[3] }}</span></td>
+                            <td class="amount">₹{{ row[4] }}</td>
+                            <td>{{ row[5] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination">
+                <a href="/?page={{ page-1 }}&year={{ year }}&state={{ state }}&type={{ ttype }}" class="page-btn">← Prev</a>
+                <span class="page-num">Page {{ page }}</span>
+                <a href="/?page={{ page+1 }}&year={{ year }}&state={{ state }}&type={{ ttype }}" class="page-btn">Next →</a>
+            </div>
+        </div>
+
+        <!-- About Section -->
+        <div class="about-section-full">
+            <div class="about-inner">
+                <div class="about-left">
+                    <div class="about-tag">ABOUT THE PROJECT</div>
+                    <h2 class="about-title">Understanding India's Digital Payment Revolution</h2>
+                    <div class="about-divider"></div>
+                    <p class="about-desc">PhonePe Pulse dataset provides deep insights into digital payment trends across India. It covers transactions, users, and insurance data at country, state, district, and pincode levels from 2018 to 2024.</p>
+                    <p class="about-desc">This dashboard helps analyze transaction growth, top performing states, and payment category distribution — giving a clear picture of India's evolving fintech landscape.</p>
+                    <div class="about-stats">
+                        <div class="astat"><span class="astat-num">6+</span><span class="astat-lbl">Years of Data</span></div>
+                        <div class="astat"><span class="astat-num">28+</span><span class="astat-lbl">States Covered</span></div>
+                        <div class="astat"><span class="astat-num">4</span><span class="astat-lbl">Data Levels</span></div>
+                    </div>
+                </div>
+                <div class="about-right">
+                    <div class="about-visual">
+                        <div class="av-ring av-ring1"></div>
+                        <div class="av-ring av-ring2"></div>
+                        <div class="av-ring av-ring3"></div>
+                        <div class="av-center">₹</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('tbody tr').forEach((row, i) => {
+    row.style.animationDelay = `${i * 0.04}s`;
+});
+const main = document.querySelector('.main');
+main.addEventListener('scroll', () => {
+    document.querySelector('.navbar').classList.toggle('scrolled', main.scrollTop > 20);
+});
+</script>
+</body>
+</html>

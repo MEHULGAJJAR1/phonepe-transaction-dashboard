@@ -1,0 +1,9 @@
+Flask
+mysql-connector-python
+pandas
+matplotlib
+seaborn
+plotly
+numpy
+requests
+gunicorn
